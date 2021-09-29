@@ -1,5 +1,7 @@
 #ISIS1225 - Librerias de soporte
 
+Req 2 - Sebastián Gomez Ahumada, 201912614, s.gomeza1@uniandes.edu.co
+Req 3 - Santiago Martinez, 201921006, as.martinez@uniandes.edu.co 
 Este proyecto contiene los Tipos abstractos de datos, estructuras de datos y algoritmos requeridos por el curso ISIS1225-Estructuras de Datos y Algoritmos
 
 -Lib
