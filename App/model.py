@@ -28,12 +28,15 @@
 from DISClib.DataStructures.arraylist import subList
 import config as cf
 from DISClib.ADT import list as lt
+from DISClib.ADT import map as mp
 from DISClib.Algorithms.Sorting import shellsort as sa
 from DISClib.Algorithms.Sorting import quicksort as qu
 from DISClib.Algorithms.Sorting import mergesort as mg
 from DISClib.Algorithms.Sorting import insertionsort as ins
 assert cf
 import time 
+from DISClib.DataStructures import mapentry as me
+
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -42,9 +45,11 @@ los mismos.
 
 # Construccion de modelos
 def newGallery(type):
-    gallery = {"artwork":None,"artists":None}
+    gallery = {"artwork":None,"artists":None,"Medium":None}
     gallery["artwork"] = lt.newList(type)
     gallery["artists"] = lt.newList(type)
+    #MODIFICACION LAB 5
+    gallery["Medium"] = mp.newMap(50,maptype="CHAINING",loadfactor=4.0,comparefunction=compareMedium)
     return gallery
 
 def ArtistNationGallery():
@@ -54,6 +59,8 @@ def ArtistNationGallery():
 # Funciones para agregar informacion al catalogo
 def addArtwork(gallery, artwork):
     lt.addLast(gallery["artwork"], artwork)
+    #MODIFICACION LAB 5
+    mp.put(gallery["Medium"],artwork["Medium"],artwork)
     
 
 def addArtist(gallery, artist):
@@ -141,6 +148,17 @@ def obras_departamento(gallery, department):
             lt.addLast(obras,actual)
     return obras
 
+
+
+#MODIFICACION LAB 5
+def ReqLab5(gallery, medium):
+    medio = mp.get(gallery["Medium"], medium)
+    if medio:
+        return me.getValue(medio)
+    return None
+
+
+
 # Funciones utilizadas para comparar elementos dentro de una lista
 def cmpArtworkByDateAcquired(artwork1, artwork2):
     return artwork1["DateAcquired"] < artwork2["DateAcquired"]
@@ -153,11 +171,15 @@ def cmpArtistByID(artist_1,artist_2):
 
 def cmpArtistByName(artist_1,artist_2):
     return artist_1["DisplayName"] > artist_2["DisplayName"]
+
 def cmpArtworkByAge(artwork_1,artwork_2):
     return artwork_1["Date"]>artwork_2["Date"]
 
 def cmpArtworkByCost(costo_1,costo_2):
     return costo_1["cost"]>costo_2["cost"]
+
+def compareMedium():
+    pass
 
 
 # Funciones de ordenamiento
@@ -317,4 +339,9 @@ def obras_costosas(departamento):
         añadir_costo(actual)
     sorted = sa.sort(a_ordenar, cmpArtworkByCost)
     return sorted
+
+def n_obras(lista,n):
+    sublista = lt.subList(lista,1,n)
+    ret = sublista.copy()
+    return ret
 

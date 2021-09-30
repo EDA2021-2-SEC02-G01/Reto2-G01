@@ -112,3 +112,12 @@ def obras_antiguas(departamento):
 def obras_costosas(departamento):
     return model.obras_costosas(departamento)
 
+
+def ReqLab5(gallery,medium):
+
+    result = model.ReqLab5(gallery,medium)
+    return result
+
+def n_obras(lista, n):
+    return model.n_obras(lista,n)
+

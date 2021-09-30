@@ -43,6 +43,7 @@ def printMenu():
     print("5- Clasificar las obras por nacionalidad de autor")
     print("6- Transportar obras de un departamento")
     print("7- Proponer una nueva exposición en el museo")
+    print("8- LAB 5: n OBRAS MÁS ANTIGUAS DE UN MEDIO")
     print("0- Salir")
 
 gallery = None
@@ -269,6 +270,21 @@ while True:
 
         #printSorted(result[1])
 
+    elif int(inputs[0]) == 8:
+        medio = input("\nIngrese medio del que desea obtener obras: ")
+        numero = int(input("\nIngrese el número de obras requeridas: "))
+        objeto = controller.ReqLab5(gallery, medio)
+        antiguas = controller.obras_antiguas(objeto)
+        mas_antiguas = controller.n_obras(antiguas, numero)
+        print(f"Las {numero} obras más antiguas del medio {medio} son:")
+        table_format = "| {} | {} | {} | {} | {} | {} | {} |"
+        print(separator)
+        print(table_format.format("Titulo","Artista","Clasificacion","Fecha","Medio","Dimensiones","Costo transporte"))
+        for i in range(lt.size(mas_antiguas)):
+            actual = lt.getElement(mas_antiguas,i)
+            print(separator)
+            print(table_format.format(actual["Title"],actual["Date"],actual["Medium"],actual["Dimensions"]))
+            print(separator)
     else:
         sys.exit(0)
 sys.exit(0)
