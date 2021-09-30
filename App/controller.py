@@ -67,6 +67,7 @@ def loadArtworks(gallery):
     input_file = csv.DictReader(open(artworksFile,encoding="utf-8"))
     for artwork in input_file:
         model.addArtwork(gallery, artwork)
+        model.addMedium(gallery,artwork,artwork["Medium"])
 
 # Funciones de ordenamiento
 

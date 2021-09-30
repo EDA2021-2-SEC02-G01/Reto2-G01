@@ -49,7 +49,7 @@ def newGallery(type):
     gallery["artwork"] = lt.newList(type)
     gallery["artists"] = lt.newList(type)
     #MODIFICACION LAB 5
-    gallery["Medium"] = mp.newMap(50,maptype="CHAINING",loadfactor=4.0,comparefunction=compareMedium)
+    gallery["Medium"] = mp.newMap(100,maptype="CHAINING",loadfactor=4.0)
     return gallery
 
 def ArtistNationGallery():
@@ -60,7 +60,19 @@ def ArtistNationGallery():
 def addArtwork(gallery, artwork):
     lt.addLast(gallery["artwork"], artwork)
     #MODIFICACION LAB 5
-    mp.put(gallery["Medium"],artwork["Medium"],artwork)
+    
+
+def addMedium(gallery,artwork,medio):
+    objeto = gallery["Medium"]
+    exist_medium = mp.contains(objeto,medio)
+    if exist_medium:
+        entrada = mp.get(objeto,medio)
+        ob = me.getValue(entrada)
+    else:
+        ob = lt.newList("ARRAY_LIST",cmpfunction=cmpArtworkByDateAcquired)
+        mp.put(gallery["Medium"],medio,ob)
+    lt.addLast(ob, artwork)
+
     
 
 def addArtist(gallery, artist):
@@ -178,8 +190,8 @@ def cmpArtworkByAge(artwork_1,artwork_2):
 def cmpArtworkByCost(costo_1,costo_2):
     return costo_1["cost"]>costo_2["cost"]
 
-def compareMedium():
-    pass
+"""def compareMedium():
+    pass"""
 
 
 # Funciones de ordenamiento

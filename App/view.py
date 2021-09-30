@@ -98,6 +98,8 @@ while True:
                 print("{}: {}".format(k, objeto_2[k]))
         print("\nOrdenando artistas...\n")
         sorted_artists = controller.sortByArtistID(gallery)
+        from DISClib.ADT import map as mp
+        print(mp.get(gallery["Medium"],"Pencil on tracing paper"))
     elif int(inputs[0]) == 0:
         break
     elif int(inputs[0]) == 2:
@@ -274,10 +276,12 @@ while True:
         medio = input("\nIngrese medio del que desea obtener obras: ")
         numero = int(input("\nIngrese el número de obras requeridas: "))
         objeto = controller.ReqLab5(gallery, medio)
-        antiguas = controller.obras_antiguas(objeto)
-        mas_antiguas = controller.n_obras(antiguas, numero)
+        print(objeto)
+        #mas_antiguas = controller.obras_antiguas(objeto)
+        mas_antiguas = controller.n_obras(objeto, numero)
         print(f"Las {numero} obras más antiguas del medio {medio} son:")
-        table_format = "| {} | {} | {} | {} | {} | {} | {} |"
+        table_format = "| {} | {} | {} | {} |"
+        separator = "-"*70
         print(separator)
         print(table_format.format("Titulo","Artista","Clasificacion","Fecha","Medio","Dimensiones","Costo transporte"))
         for i in range(lt.size(mas_antiguas)):
