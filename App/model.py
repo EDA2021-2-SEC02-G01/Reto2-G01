@@ -50,6 +50,9 @@ def newGallery(type):
     gallery["artists"] = lt.newList(type)
     #MODIFICACION LAB 5
     gallery["Medium"] = mp.newMap(100,maptype="CHAINING",loadfactor=4.0)
+    gallery["ConstituentID"] = mp.newMap(15230,maptype="CHAINING",loadfactor=5.0)
+    gallery["Nationality"] = mp.newMap(15230, maptype="CHAINING",loadfactor=4.0)
+
     return gallery
 
 def ArtistNationGallery():
@@ -73,6 +76,28 @@ def addMedium(gallery,artwork,medio):
         mp.put(gallery["Medium"],medio,ob)
     lt.addLast(ob, artwork)
 
+def addArtist_CID(gallery, artist, constituentID):
+    objeto = gallery["ConstituentID"]
+    esta = mp.contains(objeto, constituentID)
+    if esta == False:
+        mp.put(objeto,constituentID,artist["Nationality"])
+
+
+def addMedium_nationality(gallery,artwork,todos_ids):
+    objeto = gallery["Nationality"]
+    ids = gallery["ConstituentID"]
+    for i in todos_ids:
+        nacionalidad = mp.get(ids,i)
+        if nacionalidad != None:
+            nacionalidad = me.getValue(nacionalidad)
+            exist_medium = mp.contains(objeto,nacionalidad)
+            if exist_medium:
+                entrada = mp.get(objeto,nacionalidad)
+                ob = me.getValue(entrada)
+            else:
+                ob = lt.newList("ARRAY_LIST",cmpfunction=cmpArtworkByNationality)
+                mp.put(gallery["Nationality"],nacionalidad,ob)
+            lt.addLast(ob, artwork)
     
 
 def addArtist(gallery, artist):
@@ -170,6 +195,12 @@ def ReqLab5(gallery, medium):
     return None
 
 
+#LAB 6
+def obtener_obras_nacionalidad(gallery, nacionalidad):
+    obj = mp.get(gallery["Nationality"], nacionalidad)
+    if obj:
+        return me.getValue(obj)
+    return None
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 def cmpArtworkByDateAcquired(artwork1, artwork2):
@@ -189,6 +220,9 @@ def cmpArtworkByAge(artwork_1,artwork_2):
 
 def cmpArtworkByCost(costo_1,costo_2):
     return costo_1["cost"]>costo_2["cost"]
+
+def cmpArtworkByNationality(artwork_1, artwork_2):
+    return artwork_1["Nationality"] >artwork_2["Nationality"]
 
 """def compareMedium():
     pass"""

@@ -58,6 +58,7 @@ def loadArtists(gallery):
     input_file = csv.DictReader(open(artistFile, encoding="utf-8"))
     for artist in input_file:
         model.addArtist(gallery, artist)
+        model.addArtist_CID(gallery,artist,artist["ConstituentID"])
 
 def loadArtworks(gallery):
     """
@@ -68,6 +69,15 @@ def loadArtworks(gallery):
     for artwork in input_file:
         model.addArtwork(gallery, artwork)
         model.addMedium(gallery,artwork,artwork["Medium"])
+        art_artists = artwork["ConstituentID"]
+        if not "," in art_artists:
+            art_artists = art_artists[1:len(art_artists)-1]
+            art_artists = [art_artists]
+        else:
+            art_artists = art_artists.split(",")
+            art_artists[0] = art_artists[0][1:]
+            art_artists[len(art_artists)-1] = art_artists[len(art_artists)-1][:len(art_artists[len(art_artists)-1])-2]
+        model.addMedium_nationality(gallery,artwork,art_artists)
 
 # Funciones de ordenamiento
 
@@ -118,6 +128,9 @@ def ReqLab5(gallery,medium):
 
     result = model.ReqLab5(gallery,medium)
     return result
+
+def obtener_obras_nacionalidad(gallery, nacionalidad):
+    return model.obtener_obras_nacionalidad(gallery, nacionalidad)
 
 def n_obras(lista, n):
     return model.n_obras(lista,n)

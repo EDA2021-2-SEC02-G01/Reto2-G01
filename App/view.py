@@ -44,6 +44,7 @@ def printMenu():
     print("6- Transportar obras de un departamento")
     print("7- Proponer una nueva exposición en el museo")
     print("8- LAB 5: n OBRAS MÁS ANTIGUAS DE UN MEDIO")
+    print("9- LAB 6: TOTAL DE OBRAS POR NACIONALIDAD")
     print("0- Salir")
 
 gallery = None
@@ -98,8 +99,7 @@ while True:
                 print("{}: {}".format(k, objeto_2[k]))
         print("\nOrdenando artistas...\n")
         sorted_artists = controller.sortByArtistID(gallery)
-        from DISClib.ADT import map as mp
-        print(mp.get(gallery["Medium"],"Pencil on tracing paper"))
+        
     elif int(inputs[0]) == 0:
         break
     elif int(inputs[0]) == 2:
@@ -289,6 +289,15 @@ while True:
             print(separator)
             print(table_format.format(actual["Title"],actual["Date"],actual["Medium"],actual["Dimensions"]))
             print(separator)
+    
+    elif int(inputs[0]) == 9:
+        nacionalidad = input("Ingrese la nacionalidad de la cual desea la cantidad de obras: ")
+        obras = controller.obtener_obras_nacionalidad(gallery,nacionalidad)
+        if obras != None:
+            cantidad = lt.size(obras)
+            print(f"La cantidad de obras de nacionalidad {nacionalidad} es {cantidad}")
+        else:
+            print("La nacionalidad indicada no se encuentra en ninguna obra")
     else:
         sys.exit(0)
 sys.exit(0)
