@@ -49,7 +49,7 @@ def newGallery(type):
     gallery["artwork"] = lt.newList(type)
     gallery["artists"] = lt.newList(type)
     #MODIFICACION LAB 5
-    gallery["Medium"] = mp.newMap(100,maptype="CHAINING",loadfactor=4.0)
+    gallery["Medium"] = mp.newMap(22000,maptype="CHAINING",loadfactor=4.0)
     gallery["ConstituentID"] = mp.newMap(15230,maptype="CHAINING",loadfactor=5.0)
     gallery["Nationality"] = mp.newMap(15230, maptype="CHAINING",loadfactor=4.0)
 

@@ -24,6 +24,7 @@ import config as cf
 import model
 import csv
 from DISClib.ADT import list as lt
+import time
 
 
 """
@@ -47,14 +48,18 @@ def loadData(gallery):
     """
     Carga los datos de los archivos 
     """
+    start = time.process_time()
     loadArtists(gallery)
     loadArtworks(gallery)
+    stop = time.process_time()
+    elapsed_time_mseg = (stop - start)*1000
+    print(f"El tiempo de carga fue de {elapsed_time_mseg} mseg")
 
 def loadArtists(gallery):
     """
     Carga los artistas de un archivo. 
     """
-    artistFile = cf.data_dir + "MoMA/Artists-utf8-small.csv"
+    artistFile = cf.data_dir + "MoMA/Artists-utf8-large.csv"
     input_file = csv.DictReader(open(artistFile, encoding="utf-8"))
     for artist in input_file:
         model.addArtist(gallery, artist)
@@ -64,7 +69,7 @@ def loadArtworks(gallery):
     """
     Carga los artworks de un archivo
     """
-    artworksFile = cf.data_dir + "MoMA/Artworks-utf8-small.csv"
+    artworksFile = cf.data_dir + "MoMA/Artworks-utf8-large.csv"
     input_file = csv.DictReader(open(artworksFile,encoding="utf-8"))
     for artwork in input_file:
         model.addArtwork(gallery, artwork)

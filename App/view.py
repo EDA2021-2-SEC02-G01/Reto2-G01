@@ -85,8 +85,13 @@ while True:
         loadGallery(gallery)
         size_artists = lt.size(gallery["artists"])
         size_artworks = lt.size(gallery["artwork"])
+        from DISClib.ADT import map as mp
+        size_medium = mp.size(gallery["Medium"])
+        size_ids = mp.size(gallery["ConstituentID"])
         print("Artistas cargados:",size_artists)
         print("Obras cargadas: ", size_artworks)
+        print(f"Cantidad medios: {size_medium}")
+        print(f"Cantidad Artistas: {size_ids}")
         print("Ultimos 3 artistas y obras: ")
         for i in range(1,4):
             print(f"\nArtista {i}")
@@ -98,7 +103,7 @@ while True:
             for k in objeto_2:
                 print("{}: {}".format(k, objeto_2[k]))
         print("\nOrdenando artistas...\n")
-        sorted_artists = controller.sortByArtistID(gallery)
+        #sorted_artists = controller.sortByArtistID(gallery)
         
     elif int(inputs[0]) == 0:
         break
