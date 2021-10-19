@@ -64,6 +64,7 @@ def loadArtists(gallery):
     for artist in input_file:
         model.addArtist(gallery, artist)
         model.addArtist_CID(gallery,artist,artist["ConstituentID"])
+        model.addArtistBeginDate(gallery,artist,artist["BeginDate"])
 
 def loadArtworks(gallery):
     """

@@ -77,10 +77,7 @@ while True:
         print("\nSeleccione el tipo de lista con el que desea cargar el catálogo:")
         print("\n1 - Array list\n2 - Linked list")
         op = input("Ingrese la opción seleccionada: ")
-        if op == 1:
-            type = "ARRAY_LIST"
-        else:
-            type = "LINKED_LIST"
+        type = "ARRAY_LIST"
         gallery = initGallery(type)
         loadGallery(gallery)
         size_artists = lt.size(gallery["artists"])

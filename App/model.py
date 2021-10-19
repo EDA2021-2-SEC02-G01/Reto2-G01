@@ -52,6 +52,7 @@ def newGallery(type):
     gallery["Medium"] = mp.newMap(22000,maptype="CHAINING",loadfactor=4.0)
     gallery["ConstituentID"] = mp.newMap(15230,maptype="CHAINING",loadfactor=5.0)
     gallery["Nationality"] = mp.newMap(15230, maptype="CHAINING",loadfactor=4.0)
+    gallery["BeginDate"] = mp.newMap(15230,maptype="CHAINING",loadfactor=4.0)
 
     return gallery
 
@@ -82,6 +83,17 @@ def addArtist_CID(gallery, artist, constituentID):
     if esta == False:
         mp.put(objeto,constituentID,artist["Nationality"])
 
+def addArtistBeginDate(gallery, artist, begin_date):
+    objeto = gallery["BeginDate"]
+    esta = mp.contains(objeto,begin_date)
+    if esta:
+        entrada = mp.get(objeto,begin_date)
+        ob = me.getValue(entrada)
+    else:
+        ob = lt.newList("ARRAY_LIST")
+        mp.put(gallery["BeginDate"],begin_date,ob)
+    lt.addLast(ob,artist)
+
 
 def addMedium_nationality(gallery,artwork,todos_ids):
     objeto = gallery["Nationality"]
@@ -111,10 +123,11 @@ def addArtist(gallery, artist):
 # Funciones de consulta
 def requerimiento_1(gallery,ai,af):
     nueva = lt.newList("ARRAY_LIST")
-    for i in range(lt.size(gallery["artists"])):
-        actual = lt.getElement(gallery["artists"],i)
-        if ai<=actual["BeginDate"]<=af:
-            lt.addLast(nueva,actual)
+    interes = gallery["BeginDate"]
+    for i in range(ai,af+1):
+        objeto = mp.get(interes,i)
+        artistas = me.getValue(objeto)
+        lt.addLast(nueva,artistas)
     return nueva
 
 def fecha_dias(fecha):
