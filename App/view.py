@@ -277,6 +277,7 @@ while True:
               
     elif int(inputs[0])== 7:
         #TODO View Requerimiento 6 BONO
+        start_time = time.process_time()
         numero_artistas = input("Ingrese cantidad de artistas que desea en la clasificación: ")
         ai = input("Ingrese año inicial de busqueda: ")
         af = input("Ingrese año final de busqueda: ")
@@ -291,12 +292,22 @@ while True:
         utilizada"))
         for i in range(int(numero_artistas)):
             actual = lt.getElement(obras,i)
-            mayor_tec = actual["tecnicas"][0][0]
+            mayor_tec = lt.getElement(actual["tecnicas"],0)[0]
             print(table_format.format(actual["ConstituentID"],actual["DisplayName"],actual["BeginDate"]\
                 ,actual["Gender"],actual["cantidad"],lt.size(actual["tecnicas"]),mayor_tec))
-            
+            print(separator)
             nombre = actual["DisplayName"]
-            print(f"Las 5 primeras obras de la técnica {mayor_tec} de {nombre} son:")
+            print(f"\n\nLas 5 primeras obras de la técnica {mayor_tec} de {nombre} son:\n")
+            obras = actual["mayor_tecnica"]
+            """table_format = "| {} | {} | {} | {} | {} | {} |"
+            for j in range(5):
+                obra_actual = lt.getElement(obras,j)
+                print(separator)
+                print(table_format.format(obra_actual["Title"],obra_actual["Date"],obra_actual["DateAcquired"],obra_actual["Medium"],obra_actual["Department"],obra_actual["Dimensions"]))
+                print(separator)"""
+        end_time = time.process_time()
+        elapsed_time_mseg = (end_time- start_time)*1000
+        print(f"\n\nTIEMPO DE EJECUCIÓN {elapsed_time_mseg} mseg")
 
 
 

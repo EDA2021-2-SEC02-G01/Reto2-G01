@@ -482,16 +482,17 @@ def bono(gallery,artistas):
     interes = gallery["ArtworkID"]
     for i in lt.iterator(artistas):
         obj = mp.get(interes,i["ConstituentID"])
-        todas = me.getValue(obj)
-        i["cantidad"] = lt.size(todas)
-        i["tecnicas"] = contar_tecnica(todas)[1]
-        por_tecnica = lt.newList("ARRAY_LIST")
-        for k in lt.iterator(todas):
-            mejor = lt.firstElement(i["tecnicas"])
-            if k["Medium"] == mejor[0]:
-                lt.addLast(por_tecnica,k)
-        i["mayor_tecnica"] = por_tecnica
-        lt.addLast(obras, i)
+        if obj != None:
+            cada = me.getValue(obj)
+            i["cantidad"] = lt.size(cada)
+            i["tecnicas"] = contar_tecnica(cada)[1]
+            por_tecnica = lt.newList("ARRAY_LIST")
+            for k in lt.iterator(cada):
+                mejor = lt.firstElement(i["tecnicas"])
+                if k["Medium"] == mejor[0]:
+                    lt.addLast(por_tecnica,k)
+            i["mayor_tecnica"] = por_tecnica
+            lt.addLast(obras, i)
     ordenada = mg.sort(obras,cmpObras)
     return ordenada
 
