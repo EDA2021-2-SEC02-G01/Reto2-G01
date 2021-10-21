@@ -25,7 +25,6 @@
  """
 
 
-from App.controller import obtener_id
 from DISClib.DataStructures.arraylist import subList
 import config as cf
 from DISClib.ADT import list as lt
@@ -55,7 +54,9 @@ def newGallery(type):
     gallery["Nationality"] = mp.newMap(15230, maptype="CHAINING",loadfactor=4.0)
     gallery["BeginDate"] = mp.newMap(15230,maptype="CHAINING",loadfactor=4.0)
     gallery["DateAcquired"] = mp.newMap(15230,maptype="CHAINING",loadfactor=4.0)
-    gallery["ArtworkID"] = mp.newMap(22000,maptype="CHAINING",loadfactor=4.0)
+    gallery["ArtworkID"] = mp.newMap(140000,maptype="CHAINING",loadfactor=4.0)
+    gallery["Department"] = mp.newMap(15230,maptype="CHAINING",loadfactor=4.0)
+    gallery["ArtistID"] = mp.newMap(15230,maptype="CHAINING",loadfactor=4.0)
 
     return gallery
 
@@ -86,22 +87,47 @@ def addArtID(gallery,artwork,ids):
         existe = mp.contains(mapa_interes,i)
         if not existe:
             ob = lt.newList("ARRAY_LIST")
-            mp.put(gallery["ArtworkID"],i,ob)
+            mp.put(mapa_interes,i,ob)
         else:
             entrada = mp.get(mapa_interes,i)
             ob = me.getValue(entrada)
         lt.addLast(ob,artwork)
 
+def addArtistbyID(gallery,artwork,ids):
+    objeto = gallery["ArtistID"]
+    esta = mp.contains(objeto,ids)
+    if not esta:
+        mp.put(objeto,ids,artwork)
+
+def addArtworkDepartment(gallery,artwork,department):
+    mapa_interes = gallery["Department"]
+    existe = mp.contains(mapa_interes, department)
+    if existe:
+        entrada = mp.get(mapa_interes,department)
+        ob = me.getValue(entrada)
+    else:
+        ob = lt.newList("ARRAY_LIST")
+        mp.put(mapa_interes,department,ob)
+    lt.addLast(ob,artwork)
+
+def requerimiento_5(gallery,department):
+    ob = mp.get(gallery["Department"],department)
+    return me.getValue(ob)
+
 def obtener_id(gallery,nombre):
-    for i in mp.valueSet(gallery["ConstituentID"]):
-        if i["DisplayName"].lower() == nombre.lower():
-            return i["ConstituentID"] 
+    for i in lt.iterator(mp.keySet(gallery["ArtistID"])):
+        actual = mp.get(gallery["ArtistID"],i)
+        artista = me.getValue(actual)
+        if artista["DisplayName"].lower() == nombre.lower():
+            return artista["ConstituentID"] 
 
 def addArtist_CID(gallery, artist, constituentID):
     objeto = gallery["ConstituentID"]
     esta = mp.contains(objeto, constituentID)
     if esta == False:
         mp.put(objeto,constituentID,artist["Nationality"])
+
+
 
 def addArtistBeginDate(gallery, artist, begin_date):
     objeto = gallery["BeginDate"]
@@ -154,8 +180,8 @@ def addArtist(gallery, artist):
 def requerimiento_1(gallery,ai,af):
     nueva = lt.newList("ARRAY_LIST")
     interes = gallery["BeginDate"]
-    for i in range(ai,af+1):
-        objeto = mp.get(interes,i)
+    for i in range(int(ai),int(af)+1):
+        objeto = mp.get(interes,str(i))
         artistas = me.getValue(objeto)
         for j in lt.iterator(artistas):
             lt.addLast(nueva,j)
@@ -180,7 +206,7 @@ def requerimiento_2(gallery,fi,ff):
     dias_1 = fecha_dias(fi)
     dias_2 = fecha_dias(ff)
     cont = 0
-    for i in mp.keySet(gallery["DateAcquired"]):
+    for i in lt.iterator(mp.keySet(gallery["DateAcquired"])):
         dias = fecha_dias(i)
         if dias_1 <= dias <= dias_2:
             obj = mp.get(gallery["DateAcquired"],i)
@@ -196,17 +222,19 @@ def buscar_id(gallery,id):
     return me.getValue(artista)
 
 def requerimiento_3(gallery, id):
-    
     lista = mp.get(gallery["ArtworkID"],id)
     return lista
+
 def contar_tecnica(data):
     ret = {}
+    aux = lt.newList("ARRAY_ELEMENT")
     for i in range(lt.size(data)):
         actual = lt.getElement(data,i)
         ret[actual["Medium"]] = ret.get(actual["Medium"],0) + 1
     max = 0
     style = ""
     for k,v in ret.items():
+        lt.addLast(aux,(k,v))
         if v > max:
             max = v
             style = k
@@ -215,7 +243,8 @@ def contar_tecnica(data):
         actual = lt.getElement(data,i)
         if actual["Medium"] == style:
             lt.addLast(tecnica,actual)
-    return tecnica
+    ordenada = mg.sort(aux,cmpList)
+    return tecnica,ordenada
 
 def obras_departamento(gallery, department):
     obras = lt.newList("ARRAY_LIST")
@@ -235,7 +264,17 @@ def ReqLab5(gallery, medium):
     return None
 
 def requerimiento_4(obj):
-    pass
+    nueva = lt.newList("ARRAY_LIST")
+    for i in lt.iterator(mp.keySet(obj)):
+        actual = mp.get(obj,i)
+        valor = lt.size(me.getValue(actual))
+        temp = (i,valor)
+        lt.addFirst(nueva,temp)
+    nueva_sorted = mg.sort(nueva,cmpList)
+    return nueva_sorted
+
+def cmpList(nat1,nat2):
+    return nat1[1]>nat2[1]
 #LAB 6
 def obtener_obras_nacionalidad(gallery, nacionalidad):
     obj = mp.get(gallery["Nationality"], nacionalidad)
@@ -437,4 +476,14 @@ def n_obras(lista,n):
     sublista = lt.subList(lista,1,n)
     ret = sublista.copy()
     return ret
+
+def bono(gallery,artistas):
+    obras = lt.newList("ARRAY_LIST")
+    interes = gallery["ArtworkID"]
+    for i in lt.iterator(artistas):
+        todas = mp.get(interes,i["ConstituentID"])
+        lt.addLast(obras, (i["DisplayName"],lt.size(todas)))
+        i["cantidad"] = lt.size(todas)
+    ordenada = mg.sort(obras,cmpList)
+    return ordenada
 

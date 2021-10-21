@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+from DISClib.DataStructures import mapentry as me
 assert cf
 
 
@@ -42,7 +43,7 @@ def printMenu():
     print("4- Clasificar las obras de un artista por técnica")
     print("5- Clasificar las obras por nacionalidad de autor")
     print("6- Transportar obras de un departamento")
-    print("7- Proponer una nueva exposición en el museo")
+    print("7- Artistas más prolíficos")
     print("8- LAB 5: n OBRAS MÁS ANTIGUAS DE UN MEDIO")
     print("9- LAB 6: TOTAL DE OBRAS POR NACIONALIDAD")
     print("0- Salir")
@@ -74,9 +75,6 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-        print("\nSeleccione el tipo de lista con el que desea cargar el catálogo:")
-        print("\n1 - Array list\n2 - Linked list")
-        op = input("Ingrese la opción seleccionada: ")
         type = "ARRAY_LIST"
         gallery = initGallery(type)
         loadGallery(gallery)
@@ -99,8 +97,7 @@ while True:
             objeto_2 = lt.getElement(gallery["artwork"],size_artworks-i)
             for k in objeto_2:
                 print("{}: {}".format(k, objeto_2[k]))
-        print("\nOrdenando artistas...\n")
-        #sorted_artists = controller.sortByArtistID(gallery)
+
         
     elif int(inputs[0]) == 0:
         break
@@ -128,7 +125,7 @@ while True:
         fi = input("Digite la fecha inicial de la búsqueda: <AAAA-MM-DD>\n")
         ff = input("Digite la fecha final de la busqueda <AAAA-MM-DD>: \n")
         adquisiciones = controller.requerimiento_2(gallery,fi,ff)
-        print(f"Hay {lt.size(adquisiciones[0])} obras adquiridas en el rango {fi}-{ff}")
+        print(f"Hay {lt.size(adquisiciones[0])} obras adquiridas en el rango {fi}\t{ff}")
         print(f"\n{adquisiciones[1]} obras fueron compradas.")
         print("\nLas primeras 3 obras son:\n")
         
@@ -150,7 +147,7 @@ while True:
             print("\n\n")
         print("\n\nLas últimas 3 obras son:\n")
         for i in range(3):
-            actual = lt.lastElement(adquisiciones[0])
+            actual = lt.getElement(adquisiciones[0],lt.size(adquisiciones[0])-i)
             art_artists = actual["ConstituentID"]
             artists = ""
             if not "," in art_artists:
@@ -164,9 +161,7 @@ while True:
                     artista = controller.encontrar_ID(gallery, i)
                     artists += artista["DisplayName"]
             print(actual["Title"],"\t",artists,"\t",actual["Date"],"\t",actual["Medium"],actual["Dimensions"])
-            lt.removeLast(actual)
             print("\n\n")
-        
         #Función en controller params : fi, ff -> retorna [int,int,tuple(dict),tuple(dict)]       
     elif int(inputs[0]) == 4:
         #TODO View Requerimiento 3
@@ -175,17 +170,23 @@ while True:
         name = input("Digite el nombre del artista: \n")
         id_actual = controller.obtener_id(gallery,name)
         data = controller.requerimiento_3(gallery,id_actual) #Función en controller params: name -> retorna [int, int,str,list(dict)]
+        data = me.getValue(data)
         print("="*8+"Examinar el trabajo del artista: "+name+"="*8)
         print(f"{name} tiene {lt.size(data)} obras a su nombre en el museo.")
         tecnicas = controller.contar_tecnica(data)
-        tec = lt.getElement(tecnicas,0)["Medium"]
-        print(f"Su técnica más utilizada es {tec} y se presentan a continuación ({lt.size(tecnicas)}):")
+        tec = lt.getElement(tecnicas[0],0)["Medium"]
+        print("\nSus técnicas con más obras son:")
+        print("|\tTécnica\t|\t# de obras\t|")
+        for i in range(10):
+            actual = lt.getElement(tecnicas[1],i)
+            print(f"|\t{actual[0]}\t|\t{actual[1]}\t|")
+        print(f"Su técnica más utilizada es {tec} y se presentan a continuación ({lt.size(tecnicas[0])}):")
         separator = "-"*70
         table_format = "| {} | {} | {} | {} |"
         print(separator)
         print(table_format.format("Titulo","Fecha de la obra","Medio","Dimensiones"))
-        for i in range(lt.size(tecnicas)):
-            actual = lt.getElement(tecnicas,i)
+        for i in range(10):
+            actual = lt.getElement(tecnicas[0],i)
             print(separator)
             print(table_format.format(actual["Title"],actual["Date"],actual["Medium"],actual["Dimensions"]))
             print(separator)
@@ -197,31 +198,33 @@ while True:
         mejores = controller.requ4(artistas_pais)
         print("Los países con más obras según nacionalidad de su artista son:\n")
         print("País\t\tCantidad artistas")
-        for i in range(10):
+        for i in range(1,10):
             elemento = lt.getElement(mejores,i)
             print(f"{elemento[0]}\t\t{elemento[1]}")
-        mejor = lt.getElement(mejores,1)[0]
+        mejor = lt.firstElement(mejores)[0]
         print(f"\n\nLas 3 primeras y últimas obras de autores {mejor} son:\n")
         print("""\tID\t|\tTitle\t|\tMedium\t|\tDate\t|\tDimensions\t|\tDepartment\t|
         \tClasification""")
+        mejor_pais = mp.get(artistas_pais, mejor)
+        obras_mejor_pais = me.getValue(mejor_pais)
         for i in range(3):
-            actual = lt.getElement(artistas_pais[mejor],i)
-            print(actual["ObjectID"],"\t",actual["Title"],"\t",actual["Medium"],"\t",actual["Date"],"\t",actual["Department"],"\t",actual["Classification"])
+            actual = lt.getElement(obras_mejor_pais,i)
+            print(actual["ObjectID"],"|\t",actual["Title"],"|\t",actual["Medium"],"|\t",actual["Date"],"|\t",actual["Department"],"|\t",actual["Classification"])
             print("\n")
         print("\n\n")
         for i in range(3):
-            actual = lt.lastElement(artistas_pais[mejor])
-            print(actual["ObjectID"],"\t",actual["Title"],"\t",actual["Medium"],"\t",actual["Date"],"\t",actual["Department"],"\t",actual["Classification"])
-            lt.removeLast(artistas_pais[mejor])
+            actual = lt.lastElement(obras_mejor_pais)
+            print(actual["ObjectID"],"|\t",actual["Title"],"|\t",actual["Medium"],"|\t",actual["Date"],"|\t",actual["Department"],"|\t",actual["Classification"])
+            lt.removeLast(obras_mejor_pais)
 
     elif int(inputs[0]) == 6:
         #TODO View Requerimiento 5
         print("Traslado de obras")
         department = input("Digite el nombre del departamento de dónde trasladar: \n")
-        obras_departamento = controller.obras_departamento(gallery,department)
+        obras_departamento = controller.requerimiento_5(gallery,department)
         print(f"\nHay un total de {lt.size(obras_departamento)} obras para transportar")
         estimado = controller.estimar_valor(obras_departamento)
-        print(f"\nEl costo estimado de transporte es de {estimado}")
+        print(f"\nEl costo estimado de transporte es de ${round(estimado,2)}")
         obras_antiguas = controller.obras_antiguas(obras_departamento)
         print("Las 5 obras más antiguas a transportar son:\n")
         table_format = "| {} | {} | {} | {} |"
@@ -236,13 +239,14 @@ while True:
         #Función en controller params: department -> retorna [int, int, float, list[dict],list[dict]]
         obras_costosas = controller.obras_costosas(obras_departamento)
         print("Las 5 obras más costosas a transportar son:\n")
-        table_format = "| {} | {} | {} | {} | {} | {} | {} |"
+        table_format = "| {} | {} | {} | {} | {} |"
         print(separator)
-        print(table_format.format("Titulo","Artista","Clasificacion","Fecha","Medio","Dimensiones","Costo transporte"))
+        print(table_format.format("Titulo","Fecha","Medio","Dimensiones","Costo transporte"))
         for i in range(5):
             actual = lt.getElement(obras_costosas,i)
             print(separator)
-            print(table_format.format(actual["Title"],actual["Date"],actual["Medium"],actual["Dimensions"]))
+            f = round(actual["cost"],2)
+            print(table_format.format(actual["Title"],actual["Date"],actual["Medium"],actual["Dimensions"],f"${f}"))
             print(separator)
         op = input(f"Hay {lt.size(obras_departamento)} obras a ser transportadas, ¿desea visualizarlas?(Y/N): ")
         if op.lower() == "y":
@@ -255,6 +259,12 @@ while True:
               
     elif int(inputs[0])== 7:
         #TODO View Requerimiento 6 BONO
+        numero_artistas = input("Ingrese cantidad de artistas que desea en la clasificación: ")
+        ai = input("Ingrese año inicial de busqueda: ")
+        af = input("Ingrese año final de busqueda: ")
+        artistas = controller.requerimiento_1(gallery,ai,af)
+        print(f"Hay {lt.size(artistas)} nacidos entre {ai} y {af}")
+        obras = controller.bono(gallery,artistas)
         pass
     elif int(inputs[0]) == 3:
         size = int(input("Indique tamaño de la muestra: "))

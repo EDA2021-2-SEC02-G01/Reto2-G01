@@ -65,6 +65,7 @@ def loadArtists(gallery):
         model.addArtist(gallery, artist)
         model.addArtist_CID(gallery,artist,artist["ConstituentID"])
         model.addArtistBeginDate(gallery,artist,artist["BeginDate"])
+        model.addArtistbyID(gallery,artist,artist["ConstituentID"])
 
 def loadArtworks(gallery):
     """
@@ -76,6 +77,7 @@ def loadArtworks(gallery):
         model.addArtwork(gallery, artwork)
         model.addMedium(gallery,artwork,artwork["Medium"])
         model.addMediumDateacq(gallery,artwork,artwork["DateAcquired"])
+        model.addArtworkDepartment(gallery,artwork,artwork["Department"])
         art_artists = artwork["ConstituentID"]
         if not "," in art_artists:
             art_artists = art_artists[1:len(art_artists)-1]
@@ -133,13 +135,18 @@ def obras_antiguas(departamento):
 def obras_costosas(departamento):
     return model.obras_costosas(departamento)
 
+def requerimiento_5(gallery,department):
+    return model.requerimiento_5(gallery,department)
+
 def obtener_id(gallery,name):
     return model.obtener_id(gallery,name)
 
 def ReqLab5(gallery,medium):
-
     result = model.ReqLab5(gallery,medium)
     return result
+
+def bono(gallery, artistas):
+    return model.bono(gallery, artistas)
 
 def obtener_obras_nacionalidad(gallery, nacionalidad):
     return model.obtener_obras_nacionalidad(gallery, nacionalidad)
