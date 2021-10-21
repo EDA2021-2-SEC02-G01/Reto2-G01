@@ -26,6 +26,7 @@ import controller
 from DISClib.ADT import list as lt
 from DISClib.DataStructures import mapentry as me
 assert cf
+import time
 
 
 """
@@ -103,6 +104,7 @@ while True:
         break
     elif int(inputs[0]) == 2:
         #TODO View Requerimiento 1
+        start_time = time.process_time()
         print("Busqueda de artistas por rango de años")
         ai = input("Digite el año inicial de la búsqueda: \n")
         af = input("Digite el año final de la busqueda: \n")
@@ -117,10 +119,14 @@ while True:
             actual = lt.lastElement(lista)
             print(actual["DisplayName"],"\t",actual["BeginDate"],"\t",actual["EndDate"],"\t",actual["Gender"],"\t",actual["Nationality"])
             lt.removeLast(lista)
+        end_time = time.process_time()
+        elapsed_time_mseg = (end_time- start_time)*1000
+        print(f"\n\nTIEMPO DE EJECUCIÓN {elapsed_time_mseg} mseg")
         #Función en controller params : ai, af -> retorna [int,int,tuple(dict),tuple(dict)]
             
     elif int(inputs[0]) == 3:
         #TODO View Requerimiento 2
+        start_time = time.process_time()
         print("Busqueda de adquisiciones por rango de fecha")
         fi = input("Digite la fecha inicial de la búsqueda: <AAAA-MM-DD>\n")
         ff = input("Digite la fecha final de la busqueda <AAAA-MM-DD>: \n")
@@ -162,10 +168,14 @@ while True:
                     artists += artista["DisplayName"]
             print(actual["Title"],"\t",artists,"\t",actual["Date"],"\t",actual["Medium"],actual["Dimensions"])
             print("\n\n")
+        end_time = time.process_time()
+        elapsed_time_mseg = (end_time- start_time)*1000
+        print(f"\n\nTIEMPO DE EJECUCIÓN {elapsed_time_mseg} mseg")
         #Función en controller params : fi, ff -> retorna [int,int,tuple(dict),tuple(dict)]       
     elif int(inputs[0]) == 4:
         #TODO View Requerimiento 3
         #try:
+        start_time = time.process_time()
         print("="*8+"Clasificación de obras de artista por técnica"+"="*8)
         name = input("Digite el nombre del artista: \n")
         id_actual = controller.obtener_id(gallery,name)
@@ -190,9 +200,12 @@ while True:
             print(separator)
             print(table_format.format(actual["Title"],actual["Date"],actual["Medium"],actual["Dimensions"]))
             print(separator)
-        
+        end_time = time.process_time()
+        elapsed_time_mseg = (end_time- start_time)*1000
+        print(f"\n\nTIEMPO DE EJECUCIÓN {elapsed_time_mseg} mseg")
     elif int(inputs[0]) == 5:
         #TODO View Requerimiento 4
+        start_time = time.process_time()
         artistas_pais = gallery["Nationality"]
         print("\nObras catalogadas correctamente...")
         mejores = controller.requ4(artistas_pais)
@@ -216,9 +229,12 @@ while True:
             actual = lt.lastElement(obras_mejor_pais)
             print(actual["ObjectID"],"|\t",actual["Title"],"|\t",actual["Medium"],"|\t",actual["Date"],"|\t",actual["Department"],"|\t",actual["Classification"])
             lt.removeLast(obras_mejor_pais)
-
+        end_time = time.process_time()
+        elapsed_time_mseg = (end_time- start_time)*1000
+        print(f"\n\nTIEMPO DE EJECUCIÓN {elapsed_time_mseg} mseg")
     elif int(inputs[0]) == 6:
         #TODO View Requerimiento 5
+        start_time = time.process_time()
         print("Traslado de obras")
         department = input("Digite el nombre del departamento de dónde trasladar: \n")
         obras_departamento = controller.requerimiento_5(gallery,department)
@@ -255,7 +271,9 @@ while True:
                 print(separator)
                 print(table_format.format(actual["Title"],actual["ConstituentID"],actual["Classification"],actual["Date"],actual["Medium"],actual["Dimensions"],actual["cost"]))
                 print(separator)
-        
+        end_time = time.process_time()
+        elapsed_time_mseg = (end_time- start_time)*1000
+        print(f"\n\nTIEMPO DE EJECUCIÓN {elapsed_time_mseg} mseg")
               
     elif int(inputs[0])== 7:
         #TODO View Requerimiento 6 BONO
@@ -263,9 +281,27 @@ while True:
         ai = input("Ingrese año inicial de busqueda: ")
         af = input("Ingrese año final de busqueda: ")
         artistas = controller.requerimiento_1(gallery,ai,af)
-        print(f"Hay {lt.size(artistas)} nacidos entre {ai} y {af}")
+        print(f"Hay {lt.size(artistas)} artistas nacidos entre {ai} y {af}")
         obras = controller.bono(gallery,artistas)
-        pass
+        print(f"Los {numero_artistas} artistas más prolificos entre {ai} y {af} son:")
+        table_format = "| {} | {} | {} | {} | {} | {} | {} |"
+        separator = "-"*70
+        print(separator)
+        print(table_format.format("ID","Nombre","Nacimiento","Género","# obras","# Técnicas","Técnica más \
+        utilizada"))
+        for i in range(int(numero_artistas)):
+            actual = lt.getElement(obras,i)
+            mayor_tec = actual["tecnicas"][0][0]
+            print(table_format.format(actual["ConstituentID"],actual["DisplayName"],actual["BeginDate"]\
+                ,actual["Gender"],actual["cantidad"],lt.size(actual["tecnicas"]),mayor_tec))
+            
+            nombre = actual["DisplayName"]
+            print(f"Las 5 primeras obras de la técnica {mayor_tec} de {nombre} son:")
+
+
+
+        
+        
     elif int(inputs[0]) == 3:
         size = int(input("Indique tamaño de la muestra: "))
         if size > lt.size(gallery["artwork"]):

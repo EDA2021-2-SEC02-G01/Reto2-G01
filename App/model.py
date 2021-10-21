@@ -25,7 +25,7 @@
  """
 
 
-from DISClib.DataStructures.arraylist import subList
+from DISClib.DataStructures.arraylist import iterator, subList
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
@@ -481,9 +481,19 @@ def bono(gallery,artistas):
     obras = lt.newList("ARRAY_LIST")
     interes = gallery["ArtworkID"]
     for i in lt.iterator(artistas):
-        todas = mp.get(interes,i["ConstituentID"])
-        lt.addLast(obras, (i["DisplayName"],lt.size(todas)))
+        obj = mp.get(interes,i["ConstituentID"])
+        todas = me.getValue(obj)
         i["cantidad"] = lt.size(todas)
-    ordenada = mg.sort(obras,cmpList)
+        i["tecnicas"] = contar_tecnica(todas)[1]
+        por_tecnica = lt.newList("ARRAY_LIST")
+        for k in lt.iterator(todas):
+            mejor = lt.firstElement(i["tecnicas"])
+            if k["Medium"] == mejor[0]:
+                lt.addLast(por_tecnica,k)
+        i["mayor_tecnica"] = por_tecnica
+        lt.addLast(obras, i)
+    ordenada = mg.sort(obras,cmpObras)
     return ordenada
 
+def cmpObras(artista1,artista2):
+    return artista1["cantidad"]>artista2["cantidad"]
