@@ -75,6 +75,7 @@ def loadArtworks(gallery):
     for artwork in input_file:
         model.addArtwork(gallery, artwork)
         model.addMedium(gallery,artwork,artwork["Medium"])
+        model.addMediumDateacq(gallery,artwork,artwork["DateAcquired"])
         art_artists = artwork["ConstituentID"]
         if not "," in art_artists:
             art_artists = art_artists[1:len(art_artists)-1]
@@ -84,6 +85,7 @@ def loadArtworks(gallery):
             art_artists[0] = art_artists[0][1:]
             art_artists[len(art_artists)-1] = art_artists[len(art_artists)-1][:len(art_artists[len(art_artists)-1])-2]
         model.addMedium_nationality(gallery,artwork,art_artists)
+        model.addArtID(gallery,artwork,art_artists)
 
 # Funciones de ordenamiento
 
@@ -105,9 +107,11 @@ def sortByArtistID(gallery):
 def sortByArtistName(gallery):
     return model.sortByArtistName(gallery)
 
-def encontrar_ID(artist_sorted,value):
-    return model.busqueda_binaria(0,lt.size(artist_sorted)-1,artist_sorted,value)
+def encontrar_ID(gallery,value):
+    return model.buscar_id(gallery,value)
     
+def requ4(objeto):
+    return model.requerimiento_4(objeto)
 
     
 # Funciones de consulta sobre el catálogo
@@ -116,8 +120,8 @@ def requerimiento_1(gallery,ai,af):
     return model.requerimiento_1(gallery,ai,af)
 def requerimiento_2(gallery,fi,ff):
     return model.requerimiento_2(gallery,fi,ff)
-def requerimiento_3(gallery,name,sorted_artists):
-    return model.requerimiento_3(gallery,name,sorted_artists)
+def requerimiento_3(gallery,name):
+    return model.requerimiento_3(gallery,name)
 def contar_tecnica(data):
     return model.contar_tecnica(data)
 def obras_departamento(gallery, department):
@@ -129,6 +133,8 @@ def obras_antiguas(departamento):
 def obras_costosas(departamento):
     return model.obras_costosas(departamento)
 
+def obtener_id(gallery,name):
+    return model.obtener_id(gallery,name)
 
 def ReqLab5(gallery,medium):
 

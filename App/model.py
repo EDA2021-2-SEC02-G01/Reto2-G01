@@ -25,6 +25,7 @@
  """
 
 
+from App.controller import obtener_id
 from DISClib.DataStructures.arraylist import subList
 import config as cf
 from DISClib.ADT import list as lt
@@ -53,6 +54,8 @@ def newGallery(type):
     gallery["ConstituentID"] = mp.newMap(15230,maptype="CHAINING",loadfactor=5.0)
     gallery["Nationality"] = mp.newMap(15230, maptype="CHAINING",loadfactor=4.0)
     gallery["BeginDate"] = mp.newMap(15230,maptype="CHAINING",loadfactor=4.0)
+    gallery["DateAcquired"] = mp.newMap(15230,maptype="CHAINING",loadfactor=4.0)
+    gallery["ArtworkID"] = mp.newMap(22000,maptype="CHAINING",loadfactor=4.0)
 
     return gallery
 
@@ -76,6 +79,23 @@ def addMedium(gallery,artwork,medio):
         ob = lt.newList("ARRAY_LIST",cmpfunction=cmpArtworkByDateAcquired)
         mp.put(gallery["Medium"],medio,ob)
     lt.addLast(ob, artwork)
+
+def addArtID(gallery,artwork,ids):
+    mapa_interes = gallery["ArtworkID"]
+    for i in ids:
+        existe = mp.contains(mapa_interes,i)
+        if not existe:
+            ob = lt.newList("ARRAY_LIST")
+            mp.put(gallery["ArtworkID"],i,ob)
+        else:
+            entrada = mp.get(mapa_interes,i)
+            ob = me.getValue(entrada)
+        lt.addLast(ob,artwork)
+
+def obtener_id(gallery,nombre):
+    for i in mp.valueSet(gallery["ConstituentID"]):
+        if i["DisplayName"].lower() == nombre.lower():
+            return i["ConstituentID"] 
 
 def addArtist_CID(gallery, artist, constituentID):
     objeto = gallery["ConstituentID"]
@@ -110,7 +130,17 @@ def addMedium_nationality(gallery,artwork,todos_ids):
                 ob = lt.newList("ARRAY_LIST",cmpfunction=cmpArtworkByNationality)
                 mp.put(gallery["Nationality"],nacionalidad,ob)
             lt.addLast(ob, artwork)
-    
+
+def addMediumDateacq(gallery,artwork,date):
+    objeto = gallery["DateAcquired"]
+    esta = mp.contains(objeto,date)
+    if not esta:
+        ob = lt.newList("ARRAY_LIST",cmpfunction=cmpArtworkByDateAcquired)
+        mp.put(objeto,date,ob)
+    else:
+        entrada = mp.get(objeto,date)
+        ob = me.getValue(entrada)
+    lt.addLast(ob,artwork)
 
 def addArtist(gallery, artist):
     lt.addLast(gallery["artists"], artist)
@@ -127,7 +157,8 @@ def requerimiento_1(gallery,ai,af):
     for i in range(ai,af+1):
         objeto = mp.get(interes,i)
         artistas = me.getValue(objeto)
-        lt.addLast(nueva,artistas)
+        for j in lt.iterator(artistas):
+            lt.addLast(nueva,j)
     return nueva
 
 def fecha_dias(fecha):
@@ -149,28 +180,24 @@ def requerimiento_2(gallery,fi,ff):
     dias_1 = fecha_dias(fi)
     dias_2 = fecha_dias(ff)
     cont = 0
-    for i in range(lt.size(gallery["artwork"])):
-        actual = lt.getElement(gallery["artwork"],i)
-        if dias_1 <= fecha_dias(actual["DateAcquired"]) <= dias_2:
-            lt.addLast(lista,actual)
-        if "purchase" in actual["CreditLine"].lower():
-            cont += 1
+    for i in mp.keySet(gallery["DateAcquired"]):
+        dias = fecha_dias(i)
+        if dias_1 <= dias <= dias_2:
+            obj = mp.get(gallery["DateAcquired"],i)
+            for j in lt.iterator(me.getValue(obj)):
+                lt.addLast(lista,j)
+                if "purchase" in j["CreditLine"]:
+                    cont += 1
     return lista,cont
 
-def requerimiento_3(gallery, name, sorted_artists):
-    pos = 0
-    for i in range(lt.size(sorted_artists)):
-        actual = lt.getElement(sorted_artists,i)
-        if actual["DisplayName"].lower() == name.lower():
-            pos = i
-            break
-    artist = lt.getElement(sorted_artists,pos)
-    artist_id = artist["ConstituentID"]
-    lista = lt.newList("ARRAY_LIST")
-    for i in range(lt.size(gallery["artwork"])):
-        actual = lt.getElement(gallery["artwork"],i)
-        if artist_id in actual["ConstituentID"]:
-            lt.addLast(lista,actual)
+def buscar_id(gallery,id):
+    objeto = gallery["ConstituentID"]
+    artista = mp.get(objeto,id)
+    return me.getValue(artista)
+
+def requerimiento_3(gallery, id):
+    
+    lista = mp.get(gallery["ArtworkID"],id)
     return lista
 def contar_tecnica(data):
     ret = {}
@@ -207,7 +234,8 @@ def ReqLab5(gallery, medium):
         return me.getValue(medio)
     return None
 
-
+def requerimiento_4(obj):
+    pass
 #LAB 6
 def obtener_obras_nacionalidad(gallery, nacionalidad):
     obj = mp.get(gallery["Nationality"], nacionalidad)
@@ -215,6 +243,12 @@ def obtener_obras_nacionalidad(gallery, nacionalidad):
         return me.getValue(obj)
     return None
 
+
+def obtener_obras_nacionalidad_v2(gallery, nacionalidad):
+    obj = mp.get(gallery["Nationality"], nacionalidad)
+    if obj:
+        return me.getValue(obj)
+    return None
 # Funciones utilizadas para comparar elementos dentro de una lista
 def cmpArtworkByDateAcquired(artwork1, artwork2):
     return artwork1["DateAcquired"] < artwork2["DateAcquired"]

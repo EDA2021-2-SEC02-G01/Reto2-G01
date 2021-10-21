@@ -144,8 +144,8 @@ while True:
                 art_artists[0] = art_artists[0][1:]
                 art_artists[len(art_artists)-1] = art_artists[len(art_artists)-1][:len(art_artists[len(art_artists)-1])-2]
                 for i in art_artists:
-                    pos = controller.encontrar_ID(sorted_artists, i)
-                    artists+=lt.getElement(sorted_artists,pos)["DisplayName"]
+                    artista = controller.encontrar_ID(gallery, i)
+                    artists += artista["DisplayName"]
             print(actual["Title"],"\t",artists,"\t",actual["Date"],"\t",actual["Medium"],actual["Dimensions"])
             print("\n\n")
         print("\n\nLas últimas 3 obras son:\n")
@@ -161,10 +161,10 @@ while True:
                 art_artists[0] = art_artists[0][1:]
                 art_artists[len(art_artists)-1] = art_artists[len(art_artists)-1][:len(art_artists[len(art_artists)-1])-2]
                 for i in art_artists:
-                    pos = controller.encontrar_ID(sorted_artists, i)
-                    artists+=lt.getElement(sorted_artists,pos)["DisplayName"]
+                    artista = controller.encontrar_ID(gallery, i)
+                    artists += artista["DisplayName"]
             print(actual["Title"],"\t",artists,"\t",actual["Date"],"\t",actual["Medium"],actual["Dimensions"])
-            lt.removeLast(sorted_artists)
+            lt.removeLast(actual)
             print("\n\n")
         
         #Función en controller params : fi, ff -> retorna [int,int,tuple(dict),tuple(dict)]       
@@ -173,10 +173,8 @@ while True:
         #try:
         print("="*8+"Clasificación de obras de artista por técnica"+"="*8)
         name = input("Digite el nombre del artista: \n")
-        print("\nOrdenando artistas por nombre...")
-        sorted_list = controller.sortByArtistName(gallery)
-        print("\nArtistas ordenados satisfactoriamente...")
-        data = controller.requerimiento_3(gallery,name,sorted_list) #Función en controller params: name -> retorna [int, int,str,list(dict)]
+        id_actual = controller.obtener_id(gallery,name)
+        data = controller.requerimiento_3(gallery,id_actual) #Función en controller params: name -> retorna [int, int,str,list(dict)]
         print("="*8+"Examinar el trabajo del artista: "+name+"="*8)
         print(f"{name} tiene {lt.size(data)} obras a su nombre en el museo.")
         tecnicas = controller.contar_tecnica(data)
@@ -191,14 +189,12 @@ while True:
             print(separator)
             print(table_format.format(actual["Title"],actual["Date"],actual["Medium"],actual["Dimensions"]))
             print(separator)
-        """except:
-            print("Datos ingresados incorrectamente (¿habrá ingresado correctamente el nombre?) ")
-        """
+        
     elif int(inputs[0]) == 5:
         #TODO View Requerimiento 4
-        artistas_pais = controller.sortArtist(gallery,sorted_artists)
+        artistas_pais = gallery["Nationality"]
         print("\nObras catalogadas correctamente...")
-        mejores = controller.best_artists(artistas_pais)
+        mejores = controller.requ4(artistas_pais)
         print("Los países con más obras según nacionalidad de su artista son:\n")
         print("País\t\tCantidad artistas")
         for i in range(10):
